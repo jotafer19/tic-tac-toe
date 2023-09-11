@@ -1,0 +1,13 @@
+body {
+    margin: 0;
+    height: 100vb;
+}
+
+#game-container {
+    margin: auto auto;
+    width: 50vw;
+    height: 50vh;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+}
