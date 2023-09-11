@@ -1,29 +1,39 @@
 const gameBoard = (() => {
-    let gameBoardArray = ["", "", "", "", "", "", "", "", ""];
-    const positionButtons = document.querySelectorAll(".choice-spot");
-    const resetButton = document.querySelector(".reset")
-    positionButtons.forEach(button => {
-        button.addEventListener("click", (event) => {
-            checkPosition(event.target);
-        })
-    })
+    const _gameBoardArray = ["", "", "", "", "", "", "", "", ""];
+    
+    const showGameBoard = () => _gameBoardArray;
 
-    const checkPosition = (button) => {
-        if (gameBoardArray[Number(button.dataset.index)] === "") {
-            gameBoardArray[Number(button.dataset.index)] = "X";
-            console.log(gameBoardArray);
-            button.disabled = true;
+    const addMark = (index, mark) => _gameBoardArray[index] = mark;
+
+    const resetGameBoard = () => {
+        for (let i = 0; i < _gameBoardArray.length; i++) {
+            _gameBoardArray[i] = "";
         }
     }
 
-    const resetButtons = () => {
-        positionButtons.forEach(button => {
-            button.disabled = false;
-            gameBoardArray = ["", "", "", "", "", "", "", "", ""]
-        })
-    }
-
-    resetButton.addEventListener("click", resetButtons)
-
-    
+    return {showGameBoard, addMark, resetGameBoard}
 })();
+
+const gameController = (() => {
+    let _turnCount = 1;
+
+    const showTurn = () => _turnCount;
+
+    const addTurn = () => _turnCount += 1;
+
+    const getMark = () => (_turnCount % 2 === 0) ? "O" : "X";
+
+    const resetGameController = () => _turnCount = 0;
+
+    return {showTurn, addTurn, getMark, resetGameController}
+})();
+
+const playerFactory = (playerPosition) => {
+    const playerMark = () => (playerPosition === "PlayerOne") ? "X" :"O";
+    
+    return {playerMark};
+}
+
+const playerOne = playerFactory("PlayerOne");
+const playerTwo = playerFactory("PlayerTwo");
+
