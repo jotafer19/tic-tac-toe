@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Bad+Script&display=swap');
+
 body {
     margin: 0;
     height: 100vb;
@@ -5,9 +7,14 @@ body {
 
 #game-container {
     margin: auto auto;
-    width: 50vw;
-    height: 50vh;
+    width: max(300px, 450px);
+    height: max(300px, 450px);
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
+}
+
+.choice-spot {
+    font-family: 'Bad Script', cursive;
+    
 }
