@@ -22,19 +22,22 @@ const gameController = (() => {
 
     const matchInformation = document.querySelector("#match-information");
     const turnDisplay = document.querySelector("#turn-information");
+    const winnerAnnouncer = document.querySelector("#winner-announcer");
+    const winnerPlayer = document.querySelector("#winner");
+
 
     const showTurn = () => _turnCount;
 
     const addTurn = () => _turnCount += 1;
 
-    const displayTurn = (player) => turnDisplay.textContent = `${player} turn`
+    const displayTurn = (player) => turnDisplay.textContent = `${player}'s turn`
 
     const getPlayer = (playerOne, playerTwo) => (_turnCount % 2 !== 0) ? playerOne : playerTwo;
 
     const resetGameController = () => {
         _turnCount = 1;
         turnDisplay.style.display = "block";
-        turnDisplay.textContent = "Player 1 turn";
+        turnDisplay.textContent = "Player 1's turn";
         matchInformation.textContent = "";
         _gameOver = false;
     }
@@ -42,29 +45,26 @@ const gameController = (() => {
     const checkWinner = (gameBoard, player) => {
         for (let i = 0; i < gameBoard.length - 2 ; i+=3) {
             if (gameBoard[i] === gameBoard[i + 1] && gameBoard[i] === gameBoard[i + 2] && gameBoard[i] !== "") {
-                matchInformation.textContent = `${player} wins!`
-                turnDisplay.style.display = "none";
+                winnerAnnouncer.showModal();
+                winnerPlayer.textContent = `${player} wins!`.toUpperCase();
                 _gameOver = true;
             }
         }
         for (let i = 0; i < 3; i++) {
             if (gameBoard[i] === gameBoard[i + 3] && gameBoard[i] === gameBoard[i + 6] && gameBoard[i] !== "") {
-                console.log(`${player} wins!`)
-                matchInformation.textContent = `${player} wins!`
-                turnDisplay.style.display = "none";
+                winnerAnnouncer.showModal();
+                winnerPlayer.textContent = `${player} wins!`.toUpperCase();
                 _gameOver = true;
             }
         }
         if (gameBoard[0] === gameBoard[4] && gameBoard[0] === gameBoard[8] && gameBoard[4] !== "") {
-            console.log(`${player} wins!`)
-            matchInformation.textContent = `${player} wins!`
-            turnDisplay.style.display = "none";
+            winnerAnnouncer.showModal();
+            winnerPlayer.textContent = `${player} wins!`.toUpperCase();
             _gameOver = true;
         }
         if (gameBoard[2] === gameBoard[4] && gameBoard[2] === gameBoard[6] && gameBoard[4] !== "") {
-            console.log(`${player} wins!`)
-            matchInformation.textContent = `${player} wins!`
-            turnDisplay.style.display = "none";
+            winnerAnnouncer.showModal();
+            winnerPlayer.textContent = `${player} wins!`.toUpperCase();
             _gameOver = true;
         }
     }
@@ -73,6 +73,21 @@ const gameController = (() => {
 
     return {showTurn, addTurn, displayTurn, getPlayer, resetGameController, checkWinner, checkGameOver}
 })();
+
+const getPlayerData = (() => {
+    const playerOneName = document.querySelector("#player-one-name");
+    const playerTwoName = document.querySelector("#player-two-name");
+
+    const getPlayerOneName = () => (playerOneName.value === "") ? "Player 1" : playerOneName.value;
+    const getPlayerTwoName = () => (playerTwoName.value === "") ? "Player 2" : playerTwoName.value;
+
+    const resetPlayerData = () => {
+        playerOneName.value = "";
+        playerTwoName.value = "";
+    }
+
+    return {getPlayerOneName, getPlayerTwoName, resetPlayerData}
+})()
 
 const playerFactory = (name, mark) => {
 
@@ -83,8 +98,12 @@ const playGame = (() => {
     const positionButtons = document.querySelectorAll(".choice-spot");
     const resetButton = document.querySelector("#reset");
 
-    const playerOne = playerFactory("Player 1", "X");
-    const playerTwo = playerFactory("Player 2", "O");
+    const winnerAnnouncer = document.querySelector("#winner-announcer");
+    const closeDialog = document.querySelector("#close-dialog");
+    const newRound = document.querySelector("#new-round");
+
+    const playerOne = playerFactory(getPlayerData.getPlayerOneName(), "X");
+    const playerTwo = playerFactory(getPlayerData.getPlayerTwoName(), "O");
 
     const letsPlayTheGame = (spot) => {
         
@@ -106,7 +125,6 @@ const playGame = (() => {
         gameBoard.resetGameBoard();
         gameController.resetGameController();
         positionButtons.forEach(button => button.textContent = "");
-        gameController
     }
 
     positionButtons.forEach(button => {
@@ -116,5 +134,14 @@ const playGame = (() => {
         })
     })
 
-    resetButton.addEventListener("click", resetGame)
+    resetButton.addEventListener("click", resetGame);
+
+    closeDialog.addEventListener("click", () => {
+        winnerAnnouncer.close();
+    })
+
+    newRound.addEventListener("click", () => {
+        resetGame();
+        winnerAnnouncer.close();
+    });
 })()

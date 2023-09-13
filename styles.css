@@ -11,7 +11,9 @@
     --border-radius: 16px;
 }
 
-* {
+*,
+*::before,
+*::after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
@@ -23,6 +25,7 @@ body {
     display: flex;
     flex-direction: column;
     background-color: var(--body-background-color);
+    position: relative;
 }
 
 /* ------- HEADER ------- */
@@ -93,4 +96,39 @@ body {
     background-color: var(--button-background-color);
     border: none;
     border-radius: var(--border-radius);
+}
+
+#winner-announcer {
+    margin: auto;
+    background-color: transparent;
+    border: none;
+    text-align: center;
+}
+
+#winner-announcer::backdrop {
+    backdrop-filter: blur(4px);
+}
+
+#winner-announcer > p {
+    font-size: 4rem;
+    font-weight: 700;
+    color: var(--header-background-color);
+    margin-bottom: 20px;
+}
+
+#winner-announcer > div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+}
+
+.dialog-btn {
+    padding: 10px 30px;
+    border: none;
+    border-radius: var(--border-radius);
+    background-color: var(--button-background-color);
+    color: var(--white-color);
+    font-weight: 700;
+    font-size: 1rem;
 }

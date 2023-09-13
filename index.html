@@ -15,6 +15,13 @@
     <div id="game-information">
         <p id="match-information"></p>
         <p id="turn-information"> Player 1 turn</p>
+        <form id="form" action="#" method="post">
+            <label for="player-one-name"></label>
+            <input type="text" id="player-one-name" placeholder="Player 1">
+            <label for="player-two-name"></label>
+            <input type="text" id="player-two-name" placeholder="Player 2">
+            <button id="submit-button" type="submit">Submit</button>
+        </form>
     </div>
     <main id="game-container">
         <div id="boardGame">
@@ -30,5 +37,12 @@
         </div>
         <button id="reset"><span class="material-symbols-outlined">refresh</span></button>
     </main>
+    <dialog id="winner-announcer">
+        <p id="winner"></p>
+        <div id="buttons">
+            <button class="dialog-btn" id="close-dialog">Close</button>
+            <button class="dialog-btn" id="new-round">New Round</button>
+        </div>
+    </dialog>
 </body>
 </html>
