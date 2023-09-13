@@ -6,19 +6,29 @@
     <title>Document</title>
     <script src="./script.js" defer></script>
     <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,700,0,-25" />
 </head>
 <body>
+    <header id="header">
+        <p>TIC TAC TOE</p>
+    </header>
+    <div id="game-information">
+        <p id="match-information"></p>
+        <p id="turn-information"> Player 1 turn</p>
+    </div>
     <main id="game-container">
-        <button class="choice-spot" data-index="0"></button>
-        <button class="choice-spot" data-index="1"></button>
-        <button class="choice-spot" data-index="2"></button>
-        <button class="choice-spot" data-index="3"></button>
-        <button class="choice-spot" data-index="4"></button>
-        <button class="choice-spot" data-index="5"></button>
-        <button class="choice-spot" data-index="6"></button>
-        <button class="choice-spot" data-index="7"></button>
-        <button class="choice-spot" data-index="8"></button>
-        <button id="reset">Reset</button>
+        <div id="boardGame">
+            <button class="choice-spot" data-index="0"></button>
+            <button class="choice-spot" data-index="1"></button>
+            <button class="choice-spot" data-index="2"></button>
+            <button class="choice-spot" data-index="3"></button>
+            <button class="choice-spot" data-index="4"></button>
+            <button class="choice-spot" data-index="5"></button>
+            <button class="choice-spot" data-index="6"></button>
+            <button class="choice-spot" data-index="7"></button>
+            <button class="choice-spot" data-index="8"></button>
+        </div>
+        <button id="reset"><span class="material-symbols-outlined">refresh</span></button>
     </main>
 </body>
 </html>

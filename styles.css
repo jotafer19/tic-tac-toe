@@ -1,20 +1,96 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Bad+Script&display=swap');
 
-body {
-    margin: 0;
-    height: 100vb;
+:root {
+    --shadow-color : #065f46;
+    --body-background-color: #10b981;
+    --header-background-color:#1d2b3a;
+    --button-background-color: #107755;
+    --hover-green-color: #c8ebdf;
+    --white-color: #ebeaea;
+    --border-radius: 16px;
 }
 
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Orbitron', sans-serif;
+    height: 100svh;
+    display: flex;
+    flex-direction: column;
+    background-color: var(--body-background-color);
+}
+
+/* ------- HEADER ------- */
+
+#header {
+    height: 120px;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--white-color);
+    background-color: var(--header-background-color);
+    box-shadow: 6px 2px 10px 6px var(--shadow-color);
+}
+
+#header > p {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--white-color);
+}
+
+
+/* ------- GAME INFORMATION ------- */
+
+#game-information {
+    padding: 30px;
+    text-align: center;
+    font-size: 1.4rem;
+}
+
+/* ------- GAME ------- */
+
 #game-container {
-    margin: auto auto;
-    width: max(300px, 450px);
-    height: max(300px, 450px);
+    flex: 1;
     display: grid;
+    grid-template-rows: min-content min-content;
+    justify-items: center;
+    gap: 30px;
+}
+
+#boardGame {
+    display: grid;
+    width: 308px;
+    height: 308px;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
+    gap: 4px;
+    background-color: var(--body-background-color);
 }
 
 .choice-spot {
     font-family: 'Bad Script', cursive;
-    
+    font-size: 44px;
+    border: none;
+    border-radius: var(--border-radius);
+}
+
+.choice-spot:hover {
+    background-color: var(--hover-green-color);
+}
+
+#reset {
+    padding: 10px 30px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    color: var(--white-color);
+    background-color: var(--button-background-color);
+    border: none;
+    border-radius: var(--border-radius);
 }

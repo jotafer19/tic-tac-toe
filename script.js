@@ -20,66 +20,83 @@ const gameController = (() => {
     let _turnCount = 1;
     let _gameOver = false;
 
+    const matchInformation = document.querySelector("#match-information");
+    const turnDisplay = document.querySelector("#turn-information");
+
     const showTurn = () => _turnCount;
 
     const addTurn = () => _turnCount += 1;
-    
-    const getMark = () => (_turnCount & 2 !== 0) ? "X" : "O"
+
+    const displayTurn = (player) => turnDisplay.textContent = `${player} turn`
+
+    const getPlayer = (playerOne, playerTwo) => (_turnCount % 2 !== 0) ? playerOne : playerTwo;
 
     const resetGameController = () => {
         _turnCount = 1;
+        turnDisplay.style.display = "block";
+        turnDisplay.textContent = "Player 1 turn";
+        matchInformation.textContent = "";
         _gameOver = false;
     }
 
     const checkWinner = (gameBoard, player) => {
         for (let i = 0; i < gameBoard.length - 2 ; i+=3) {
             if (gameBoard[i] === gameBoard[i + 1] && gameBoard[i] === gameBoard[i + 2] && gameBoard[i] !== "") {
-                console.log(`${player} wins!`)
+                matchInformation.textContent = `${player} wins!`
+                turnDisplay.style.display = "none";
                 _gameOver = true;
             }
         }
         for (let i = 0; i < 3; i++) {
             if (gameBoard[i] === gameBoard[i + 3] && gameBoard[i] === gameBoard[i + 6] && gameBoard[i] !== "") {
                 console.log(`${player} wins!`)
+                matchInformation.textContent = `${player} wins!`
+                turnDisplay.style.display = "none";
                 _gameOver = true;
             }
         }
         if (gameBoard[0] === gameBoard[4] && gameBoard[0] === gameBoard[8] && gameBoard[4] !== "") {
             console.log(`${player} wins!`)
+            matchInformation.textContent = `${player} wins!`
+            turnDisplay.style.display = "none";
             _gameOver = true;
         }
         if (gameBoard[2] === gameBoard[4] && gameBoard[2] === gameBoard[6] && gameBoard[4] !== "") {
             console.log(`${player} wins!`)
+            matchInformation.textContent = `${player} wins!`
+            turnDisplay.style.display = "none";
             _gameOver = true;
         }
     }
 
-    const check_gameOver = () => _gameOver;
+    const checkGameOver = () => _gameOver;
 
-    return {showTurn, addTurn, getMark, resetGameController, checkWinner, check_gameOver}
+    return {showTurn, addTurn, displayTurn, getPlayer, resetGameController, checkWinner, checkGameOver}
 })();
 
-const playerFactory = ((mark) => {
+const playerFactory = (name, mark) => {
 
-    const getPlayer = (mark) => (mark === "X") ? "Player 1" : "Player 2";
-
-    return {mark, getPlayer};
-})()
+    return {name, mark};
+}
 
 const playGame = (() => {
     const positionButtons = document.querySelectorAll(".choice-spot");
     const resetButton = document.querySelector("#reset");
 
+    const playerOne = playerFactory("Player 1", "X");
+    const playerTwo = playerFactory("Player 2", "O");
+
     const letsPlayTheGame = (spot) => {
-        console.log(gameController.showTurn());
-        gameBoard.addMark(spot.dataset.index, gameController.getMark());
-        spot.textContent = gameController.getMark();
-        gameController.checkWinner(gameBoard.showGameBoard(), playerFactory.getPlayer(gameController.getMark()));
+        
+        gameBoard.addMark(spot.dataset.index, gameController.getPlayer(playerOne, playerTwo).mark);
+        spot.textContent = gameController.getPlayer(playerOne, playerTwo).mark;
+        gameController.checkWinner(gameBoard.showGameBoard(), gameController.getPlayer(playerOne, playerTwo).name);
 
         console.log(gameBoard.showGameBoard())
         gameController.addTurn();
+        gameController.displayTurn(gameController.getPlayer(playerOne, playerTwo).name);
 
-        if (gameController.showTurn() > 9 && !haveAWinner) {
+        if (gameController.showTurn() > 9 && !gameController.checkGameOver()) {
             console.log("It's a tie!")
             haveAWinner = true;
         }
@@ -94,7 +111,7 @@ const playGame = (() => {
 
     positionButtons.forEach(button => {
         button.addEventListener("click", (event) => {
-            if (event.target.textContent !== "" || gameController.check_gameOver()) return;
+            if (event.target.textContent !== "" || gameController.checkGameOver()) return;
             letsPlayTheGame(event.target);
         })
     })
