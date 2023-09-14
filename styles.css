@@ -8,6 +8,9 @@
     --button-background-color: #107755;
     --hover-green-color: #c8ebdf;
     --white-color: #ebeaea;
+    --player-one-color: #fcd34d;
+    --player-two-color: #93c5fd;
+    --tie-color: #cbd5e1;
     --border-radius: 16px;
 }
 
@@ -97,6 +100,35 @@ body {
     border: none;
     border-radius: var(--border-radius);
 }
+
+#score-panel {
+    display: flex;
+    justify-items: end;
+    align-items: center;
+    gap: 40px;
+}
+
+.score {
+    width: 200px;
+    padding: 10px;
+    text-align: center;
+    border-radius: var(--border-radius);
+}
+
+#player-one-score {
+    background-color: var(--player-one-color);
+}
+
+#player-two-score {
+    background-color: var(--player-two-color);
+}
+
+#tie {
+    background-color: var(--tie-color);
+}
+
+
+/* ------- WINNER ANNOUNCER ------- */
 
 #winner-announcer {
     margin: auto;
