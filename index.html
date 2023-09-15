@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Tic Tac Toe</title>
     <script src="./script.js" defer></script>
     <link rel="stylesheet" href="./styles.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,700,0,-25" />
@@ -12,18 +12,24 @@
     <header id="header">
         <p>TIC TAC TOE</p>
     </header>
-    <div id="game-information">
-        <p id="match-information"></p>
-        <p id="turn-information"> Player 1 turn</p>
-        <form id="form" action="#" method="post">
-            <label for="player-one-name"></label>
-            <input type="text" id="player-one-name" placeholder="Player 1">
-            <label for="player-two-name"></label>
-            <input type="text" id="player-two-name" placeholder="Player 2">
-            <button id="submit-button" type="submit">Submit</button>
-        </form>
-    </div>
     <main id="game-container">
+        <div id="score-panel">
+            <div class="score" id="player-one-score">
+                <p>Player 1</p>
+                <p class="points">0</p>
+            </div>
+            <div class="score" id="draw">
+                <p>Tie</p>
+                <p class="points">0</p>
+            </div>
+            <div class="score" id="player-two-score">
+                <p>Player 2</p>
+                <p class="points">0</p>
+            </div>
+        </div>
+        <div id="game-information">
+            <p id="turn-information">Player 1 turn</p>
+        </div>
         <div id="boardGame">
             <button class="choice-spot" data-index="0"></button>
             <button class="choice-spot" data-index="1"></button>
@@ -36,20 +42,6 @@
             <button class="choice-spot" data-index="8"></button>
         </div>
         <button id="reset"><span class="material-symbols-outlined">refresh</span></button>
-        <div id="score-panel">
-            <div class="score" id="player-one-score">
-                <p>Player 1</p>
-                <p class="points">0</p>
-            </div>
-            <div class="score" id="tie">
-                <p>Tie</p>
-                <p class="points">0</p>
-            </div>
-            <div class="score" id="player-two-score">
-                <p>Player 2</p>
-                <p class="points">0</p>
-            </div>
-        </div>
     </main>
     <dialog id="winner-announcer">
         <p id="winner"></p>
