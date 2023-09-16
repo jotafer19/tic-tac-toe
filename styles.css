@@ -177,6 +177,10 @@ body {
 }
 
 @media screen and (max-width: 752px) {
+    #header {
+        padding: 30px;
+    }
+    
     #header > p {
         font-size: 2.5rem;
     }
