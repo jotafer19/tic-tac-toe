@@ -41,7 +41,9 @@ const gameBoard = (() => {
         }
         setTimeout(() => {
             _squares[index].textContent = mark;
+            (mark === "X") ? _squares[index].style.color = "#fcd34d" : _squares[index].style.color = "#93c5fd"
         }, delay);
+
     };
 
     const getArray = () => _array;
@@ -92,6 +94,7 @@ const game = (() => {
     const tieDisplay = document.querySelector("#draw > .points");
     const turnInformation = document.querySelector("#turn-information");
     turnInformation.textContent = ""
+
     const playerOne = playerFactory("Player 1", "X");
     const bot = playerFactory("Bot", "O")
 
@@ -218,17 +221,8 @@ const display = (() => {
     const newRoundButton = document.querySelector("#new-round");
 
     const show = (message) => {
-        _winnerDialog.showModal();
+        _winnerDialog.showModal()
         winner.textContent = message;
-        let interval = 1200;
-        // set shorter interval time if tie
-        if (message.includes('tie')) {
-            interval = 200;
-        }
-        // setTimeout(() => {
-        //     _display.style.transitionDuration = '0.3s';
-        //     _display.style.opacity = '1';
-        // }, interval)
     }
     const updateScores = (playerOne, bot) => {
         _playerOneScore.textContent = playerOne.getScore();
