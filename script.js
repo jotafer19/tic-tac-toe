@@ -1,169 +1,336 @@
-const gameBoard = (() => {
-    const _gameBoardArray = ["", "", "", "", "", "", "", "", ""];
-    
-    const showGameBoard = () => _gameBoardArray;
+// player factory function
+const playerFactory = (name, mark) => {
 
-    const addMark = (index, mark) => {
-        if (_gameBoardArray[index] === "") _gameBoardArray[index] = mark;
+    let _score = 0;
+
+    const getScore = () => _score;
+
+    const increaseScore = () => _score += 1;
+
+    const resetScore = () => _score = 0;
+
+    return { name, mark, getScore, increaseScore, resetScore };
+}
+
+
+// gameBoard module
+const gameBoard = (() => {
+    const _squares = document.querySelectorAll('.choice-spot');
+    const _array = ["", "", "", "", "", "", "", "", ""];
+    let _winningSquares = [];
+
+    // initiate squares - each square div contains a data-index attribute
+    _squares.forEach(square => {
+        square.addEventListener("click", () => {
+            if (!getSquare(square.dataset.index) && !game.getGameOverStatus()) {
+                setSquare(square.dataset.index, game.getMark());
+                game.nextTurn();
+            }
+        })
+    });
+
+    // methods
+    const getSquare = index => _array[index];
+
+    const setSquare = (index, mark) => {
+        _array[index] = mark;
+        let delay = 0;
+        // add slight delay before displaying bot's move
+        if (mark === "O") {
+            delay = 300;
+        }
+        setTimeout(() => {
+            _squares[index].textContent = mark;
+        }, delay);
+    };
+
+    const getArray = () => _array;
+
+    const getMoves = () => {
+        // find free spaces
+        const freeSpaces = [];
+        for (let i = 0; i < _array.length; i++) {
+            if (_array[i] === "") {
+                freeSpaces.push(i);
+            }
+        }
+        return freeSpaces;
     }
 
     const resetGameBoard = () => {
-        for (let i = 0; i < _gameBoardArray.length; i++) {
-            _gameBoardArray[i] = "";
+        for (let i = 0; i < _array.length; i++) {
+            _array[i] = "";
         }
-    }
+        _squares.forEach(square => {
+            square.textContent = "";
+        })
+    };
 
-    return {showGameBoard, addMark, resetGameBoard}
+    // use this for the winning squares animation 
+    const setWinningSquares = (winningIndexArray) => {
+        _winningSquares = winningIndexArray.sort();
+    };
+
+    const animateSquares = () => {
+        // add slight delay
+        setTimeout(() => {
+            for (let i = 0; i < 3; i++) {
+                setTimeout(() => {
+                    _squares[_winningSquares[i]].classList.add('square-win');
+                }, 100 * i);
+            }
+        }, 300);
+    };
+
+    return { getSquare, setSquare, getArray, getMoves, resetGameBoard, setWinningSquares};
 })();
 
-const playerFactory = (name, mark) => {
-    let _points = 0;
 
-    const showScore = () => _points;
+// game logic
+const game = (() => {
+    // const _botLevelSelect = document.querySelector('#bot-level');
+    const tieDisplay = document.querySelector("#draw > .points");
+    const turnInformation = document.querySelector("#turn-information");
+    turnInformation.textContent = ""
+    const playerOne = playerFactory("Player 1", "X");
+    const bot = playerFactory("Bot", "O")
 
-    const addPoint = () => _points += 1;
-    
-    const resetScore = () => _points = 0;
+    let _currentMark = playerOne.mark;
+    let _currentPlayer = playerOne;
+    let _isGameOver = false;
+    let _botLevel = 'impossible';
+    let _tieScore = 0;
+    // _botLevelSelect.value = _botLevel;
 
-    const displayPoints = (playerScoreDisplay) => playerScoreDisplay.textContent = _points;
+    // // check if bot level stored locally
+    // if (localStorage.getItem('botLevel')) {
+    //     _botLevel = localStorage.getItem('botLevel');
+    //     _botLevelSelect.value = _botLevel;
+    // }
 
-    return {name, mark, showScore, addPoint, resetScore, displayPoints};
+    // _botLevelSelect.addEventListener('input', () => {
+    //     _botLevel = _botLevelSelect.value;
+    //     localStorage.setItem('botLevel', _botLevel);
+    // });
+
+    // methods
+    const getMark = () => _currentMark;
+    const getGameOverStatus = () => _isGameOver;
+    const nextTurn = () => {
+        // display winner
+        if (checkForWinner(gameBoard.getArray(), game.getMark())) {
+            _isGameOver = true;
+            display.show(`${_currentPlayer.name} wins!`);
+            // gameBoard.animateSquares();
+            _currentPlayer.increaseScore();
+            display.updateScores(playerOne, bot);
+        } else if (checkForWinner(gameBoard.getArray(), game.getMark()) === false) {
+            display.show("It's a tie...");
+            _tieScore += 1;
+            tieDisplay.textContent = _tieScore;
+        } else {
+            _currentMark = _currentMark === "X" ? "O" : "X";
+            _currentPlayer = _currentPlayer === playerOne ? bot : playerOne;
+        }
+
+        // initiate bot move
+        if (_currentPlayer === bot && _isGameOver === false) {
+            if (_botLevel === 'very easy') {
+                botMove.move(3);
+            } else if (_botLevel === 'easy') {
+                botMove.move(5);
+            } else if (_botLevel === 'medium') {
+                botMove.move(7);
+            } else if (_botLevel === 'hard') {
+                botMove.move(8);
+            } else if (_botLevel === 'very hard') {
+                botMove.move(9);
+            } else if (_botLevel === 'impossible') {
+                botMove.move(10);
+            }
+        }
+    };
+
+    const restartGame = () => {
+        gameBoard.resetGameBoard();
+        _currentPlayer = playerOne;
+        _currentMark = "X";
+        _isGameOver = false;
+    }
+
+    const fullResetGame = () => {
+        restartGame();
+        playerOne.resetScore();
+        bot.resetScore();
+        _tieScore = 0;
+        tieDisplay.textContent = 0;
+    }
+
+    return {getMark, nextTurn, getGameOverStatus, restartGame, fullResetGame};
+})();
+
+
+// check for winnner
+const checkForWinner = (array, mark) => {
+    // check for rows of 3
+    for (let i = 0; i < 9; i++) {
+        // check horizontal lines
+        if (i % 3 === 0 && array[i] === mark && array[i + 1] === mark && array[i + 2] === mark) {
+            gameBoard.setWinningSquares([i, i + 1, i + 2]);
+            return true;
+        }
+        // check vertical lines
+        if (i < 3 && array[i] === mark && array[i + 3] === mark && array[i + 6] === mark) {
+            gameBoard.setWinningSquares([i, i + 3, i + 6]);
+            return true;
+        }
+        // check diagonal lines
+        if (i === 4) {
+            // from top-left
+            if (array[i] === mark && array[i - 4] === mark && array[i + 4] === mark) {
+                gameBoard.setWinningSquares([i, i - 4, i + 4]);
+                return true;
+            }
+            // from top-right
+            if (array[i] === mark && array[i - 2] === mark && array[i + 2] === mark) {
+                gameBoard.setWinningSquares([i, i - 2, i + 2]);
+                return true;
+            }
+        }
+    }
+    // if array full and no winner game is tied
+    if (array.includes("")) {
+        return;
+    } else {
+        return false;
+    }
 }
 
-const gameController = (() => {
-    const turnInformation = document.querySelector("#turn-information");
-    const playerOneScore = document.querySelector("#player-one-score > .points");
-    const playerTwoScore = document.querySelector("#player-two-score > .points");
-    const draw = document.querySelector("#draw > .points");
-    const winnerDialog = document.querySelector("#winner-announcer");
-    const winMessage = document.querySelector("#winner");
 
-    let _turn = 1;
-    let _gameOver = false;
-    let _drawScore = 0;
-
-    const addTurn = () => _turn += 1;
-
-    const getPlayer = (playerOne, playerTwo) => (_turn % 2 !== 0) ? playerOne : playerTwo;
-
-    const displayTurn = (playerOne, playerTwo) => turnInformation.textContent = `${getPlayer(playerOne, playerTwo).name} turn`
-
-    const checkGameOver = () => _gameOver;
-
-    const updateScore = (player) => {
-        player.addPoint();
-        (player.mark === "X") ? playerOneScore.textContent = player.showScore() : playerTwoScore.textContent = player.showScore();
-    }
-
-    const newRoundGameController = () => {
-        turnInformation.textContent = "Player 1 turn";
-        _turn = 1;
-        _gameOver = false;
-    }
-
-    const resetGameController = () => {
-        newRoundGameController();
-        playerOneScore.textContent = 0;
-        playerTwoScore.textContent = 0;
-        _drawScore = 0;
-        draw.textContent = 0;
-    }
-
-    const checkWinner = (gameBoard, player) => {
-        for (let i = 0; i < gameBoard.length - 2 ; i+=3) {
-            if (gameBoard[i] === gameBoard[i + 1] && gameBoard[i] === gameBoard[i + 2] && gameBoard[i] !== "") {
-                winnerDialog.showModal();
-                winMessage.textContent = (`${player.name} wins!`).toUpperCase();
-                updateScore(player);
-                _gameOver = true;
-            }
-        }
-        for (let i = 0; i < 3; i++) {
-            if (gameBoard[i] === gameBoard[i + 3] && gameBoard[i] === gameBoard[i + 6] && gameBoard[i] !== "") {
-                winnerDialog.showModal();
-                winMessage.textContent = (`${player.name} wins!`).toUpperCase();
-                updateScore(player);
-                _gameOver = true;
-            }
-        }
-        if (gameBoard[0] === gameBoard[4] && gameBoard[0] === gameBoard[8] && gameBoard[4] !== "") {
-            winnerDialog.showModal();
-            winMessage.textContent = (`${player.name} wins!`).toUpperCase();
-            updateScore(player);
-            _gameOver = true;
-        } else if (gameBoard[2] === gameBoard[4] && gameBoard[2] === gameBoard[6] && gameBoard[4] !== "") {
-            winnerDialog.showModal();
-            winMessage.textContent = (`${player.name} wins!`).toUpperCase();
-            updateScore(player);
-            _gameOver = true;
-        } else if (!checkGameOver() && _turn === 9) {
-            winnerDialog.showModal();
-            winMessage.textContent = ("It's a draw!").toUpperCase();
-            _drawScore += 1;
-            draw.textContent = _drawScore;
-            _gameOver = true;
-        }
-    }
-    return {addTurn, getPlayer, displayTurn, checkGameOver, newRoundGameController, resetGameController, checkWinner}
-})()
-
-const playGame = (() => {
-    const playSpots = document.querySelectorAll(".choice-spot");
-    const resetButton = document.querySelector("#reset");
-    const winnerDialog = document.querySelector("#winner-announcer");
-    const closeDialog = document.querySelector("#close-dialog");
+// displayController
+const display = (() => {
+    const _winnerDialog = document.querySelector('#winner-announcer');
+    const winner = document.querySelector("#winner");
+    const _playerOneScore = document.querySelector('#player-one-score > .points');
+    const _botScore = document.querySelector('#player-two-score > .points');
+    const _restartBtn = document.querySelector('#reset');
+    const closeDialogButton = document.querySelector("#close-dialog");
     const newRoundButton = document.querySelector("#new-round");
 
-    const playerOne = playerFactory("Player 1", "X");
-    const playerTwo = playerFactory("Player 2", "O");
-
-    const displayMark = (spot, mark) => {
-        spot.textContent = mark;
-        if (mark === "X") {
-            spot.style.color = "#fcd34d";
-        } else {
-            spot.style.color = "#93c5fd";
+    const show = (message) => {
+        _winnerDialog.showModal();
+        winner.textContent = message;
+        let interval = 1200;
+        // set shorter interval time if tie
+        if (message.includes('tie')) {
+            interval = 200;
         }
+        // setTimeout(() => {
+        //     _display.style.transitionDuration = '0.3s';
+        //     _display.style.opacity = '1';
+        // }, interval)
+    }
+    const updateScores = (playerOne, bot) => {
+        _playerOneScore.textContent = playerOne.getScore();
+        _botScore.textContent = bot.getScore();
     }
 
-    const playTurn = (spot) => {
-        gameBoard.addMark(spot.dataset.index, gameController.getPlayer(playerOne, playerTwo).mark);
-        displayMark(spot, gameController.getPlayer(playerOne, playerTwo).mark);
-        gameController.checkWinner(gameBoard.showGameBoard(), gameController.getPlayer(playerOne, playerTwo))
-        if (!gameController.checkGameOver()) {
-            gameController.addTurn();
-            gameController.displayTurn(playerOne, playerTwo);
-        }
-    }
-
-    const newRound = () => {
-        gameBoard.resetGameBoard();
-        gameController.newRoundGameController();
-        playSpots.forEach(spot => spot.textContent = "");
-    }
-
-    const resetGame = () => {
-        newRound();
-        playerOne.resetScore();
-        playerTwo.resetScore();
-        gameController.resetGameController();
-    }
-
-    playSpots.forEach(spot => {
-        spot.addEventListener("click", (event) => {
-            if (event.target.textContent !== "" || gameController.checkGameOver()) return;
-            playTurn(event.target);
-        })
-    })
-
-    resetButton.addEventListener("click", resetGame);
-
-    closeDialog.addEventListener("click", () => {
-        winnerDialog.close();
+    _restartBtn.addEventListener("click", () => {
+        game.fullResetGame();
+        _playerOneScore.textContent = 0;
+        _botScore.textContent = 0;
     })
 
     newRoundButton.addEventListener("click", () => {
-        newRound();
-        winnerDialog.close();
+        game.restartGame();
+        _winnerDialog.close();
     })
+
+    closeDialogButton.addEventListener("click", () => {
+        _winnerDialog.close();
+    })
+
+    return {show, updateScores};
+})()
+
+
+
+// BOT MOVES
+const botMove = (() => {
+
+    const _chooseRandomSquare = () => {
+        // get possible moves
+        const freeSpaces = gameBoard.getMoves();
+        // choose one possible move at random
+        const randomIndex = Math.floor(Math.random() * freeSpaces.length);
+        gameBoard.setSquare(freeSpaces[randomIndex], game.getMark());
+    }
+
+    // minimax is a recursive algorithm that finds the optimal move
+    const _minimax = (array, depth = 0, mark = "O") => {
+
+        const nextMark = mark === "O" ? "X" : "O";
+        let bestIndex;
+        // set default best score depending on current mark being checked
+        let bestScore = mark === "O" ? -Infinity : Infinity;
+
+        // return 0 is no free spaces
+        if (!array.includes("")) return { bestIndex: null, bestScore: 0 }
+
+        // check for winner & return
+        for (let i = 0; i < array.length; i++) {
+            // check is space is empty and insert mark if so
+            if (!array[i]) {
+                array[i] = mark;
+                if (checkForWinner(array, mark)) {
+                    if (mark === "O") {
+                        let score = 10 - depth;
+                        bestScore = Math.max(score, bestScore);
+                        if (score === bestScore) {
+                            bestIndex = i;
+                        }
+                    } else {
+                        let score = depth - 10;
+                        bestScore = Math.min(score, bestScore);
+                        if (score === bestScore) {
+                            bestIndex = i;
+                        }
+                    }
+                } else {
+                    if (mark === "O") {
+                        let score = _minimax(array, depth + 1, nextMark).bestScore;
+                        bestScore = Math.max(score, bestScore);
+                        if (score === bestScore) {
+                            bestIndex = i;
+                        }
+                    } else {
+                        let score = _minimax(array, depth + 1, nextMark).bestScore;
+                        bestScore = Math.min(score, bestScore);
+                        if (score === bestScore) {
+                            bestIndex = i;
+                        }
+                    }
+                }
+                array[i] = "";
+            }
+        }
+        return {bestIndex, bestScore}
+    };
+
+    const move = (level) => {
+        // generate random number from 0 - 10
+        let random = Math.round(Math.random(1) * 10);
+
+        // choose random space if random number is higher than current level
+        // else play the ideal move using minimax
+        if (random > level) {
+            _chooseRandomSquare();
+        } else {
+            const array = [...gameBoard.getArray()];
+            gameBoard.setSquare(_minimax(array).bestIndex, "O");
+        }
+        game.nextTurn();
+    }
+
+    return { move }
 })()
