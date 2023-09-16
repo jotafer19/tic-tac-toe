@@ -90,7 +90,7 @@ const gameBoard = (() => {
 
 // game logic
 const game = (() => {
-    // const _botLevelSelect = document.querySelector('#bot-level');
+    const _botLevelSelect = document.querySelector('#bot-difficulty-options');
     const tieDisplay = document.querySelector("#draw > .points");
     const turnInformation = document.querySelector("#turn-information");
     turnInformation.textContent = ""
@@ -101,20 +101,12 @@ const game = (() => {
     let _currentMark = playerOne.mark;
     let _currentPlayer = playerOne;
     let _isGameOver = false;
-    let _botLevel = 'impossible';
+    let _botLevel = 'medium';
     let _tieScore = 0;
-    // _botLevelSelect.value = _botLevel;
 
-    // // check if bot level stored locally
-    // if (localStorage.getItem('botLevel')) {
-    //     _botLevel = localStorage.getItem('botLevel');
-    //     _botLevelSelect.value = _botLevel;
-    // }
-
-    // _botLevelSelect.addEventListener('input', () => {
-    //     _botLevel = _botLevelSelect.value;
-    //     localStorage.setItem('botLevel', _botLevel);
-    // });
+    _botLevelSelect.addEventListener('input', () => {
+        _botLevel = _botLevelSelect.value;
+    });
 
     // methods
     const getMark = () => _currentMark;
@@ -173,7 +165,7 @@ const game = (() => {
 })();
 
 
-// check for winnner
+// check for winner
 const checkForWinner = (array, mark) => {
     // check for rows of 3
     for (let i = 0; i < 9; i++) {
@@ -314,7 +306,6 @@ const botMove = (() => {
     const move = (level) => {
         // generate random number from 0 - 10
         let random = Math.round(Math.random(1) * 10);
-
         // choose random space if random number is higher than current level
         // else play the ideal move using minimax
         if (random > level) {

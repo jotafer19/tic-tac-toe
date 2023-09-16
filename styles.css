@@ -64,6 +64,21 @@ body {
     padding: 30px;
 }
 
+.bot-level {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+}
+
+#bot-difficulty-options {
+    padding: 10px;
+    border: unset;
+    border-radius: var(--border-radius);
+    background-color: var(--white-color);
+    font-family: 'Orbitron', sans-serif;;
+}
+
 #boardGame {
     display: grid;
     width: 308px;
