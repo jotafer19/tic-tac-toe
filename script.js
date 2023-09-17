@@ -36,7 +36,7 @@ const gameBoard = (() => {
         _array[index] = mark;
         let delay = 0;
         // add slight delay before displaying bot's move
-        if (mark === "O") {
+        if (mark === "O" && game.getGameMode()) {
             delay = 300;
         }
         setTimeout(() => {
@@ -91,12 +91,25 @@ const gameBoard = (() => {
 // game logic
 const game = (() => {
     const _botLevelSelect = document.querySelector('#bot-difficulty-options');
+    const gameMode = document.querySelector("#game-mode");
     const tieDisplay = document.querySelector("#draw > .points");
     const turnInformation = document.querySelector("#turn-information");
     turnInformation.textContent = ""
 
     const playerOne = playerFactory("Player 1", "X");
-    const bot = playerFactory("Bot", "O")
+    let playerTwo = playerFactory("Bot", "O");
+    let playVsBot = true;
+    
+    gameMode.addEventListener("input", (event) => {
+        if (event.target.checked) {
+            playVsBot = true;
+            playerTwo = playerFactory("Bot", "O");
+        } else {
+            playVsBot = false;
+            playerTwo = playerFactory("Player 2", "O");
+        }
+        console.log(playerTwo)
+    })
 
     let _currentMark = playerOne.mark;
     let _currentPlayer = playerOne;
@@ -111,6 +124,7 @@ const game = (() => {
     // methods
     const getMark = () => _currentMark;
     const getGameOverStatus = () => _isGameOver;
+    const getGameMode = () => playVsBot;
     const nextTurn = () => {
         // display winner
         if (checkForWinner(gameBoard.getArray(), game.getMark())) {
@@ -118,18 +132,18 @@ const game = (() => {
             display.show(`${_currentPlayer.name} wins!`);
             // gameBoard.animateSquares();
             _currentPlayer.increaseScore();
-            display.updateScores(playerOne, bot);
+            display.updateScores(playerOne, playerTwo);
         } else if (checkForWinner(gameBoard.getArray(), game.getMark()) === false) {
             display.show("It's a tie...");
             _tieScore += 1;
             tieDisplay.textContent = _tieScore;
         } else {
             _currentMark = _currentMark === "X" ? "O" : "X";
-            _currentPlayer = _currentPlayer === playerOne ? bot : playerOne;
+            _currentPlayer = _currentPlayer === playerOne ? playerTwo : playerOne;
         }
 
         // initiate bot move
-        if (_currentPlayer === bot && _isGameOver === false) {
+        if (_currentPlayer === playerTwo && _isGameOver === false && playVsBot) {
             if (_botLevel === 'very easy') {
                 botMove.move(3);
             } else if (_botLevel === 'easy') {
@@ -156,12 +170,13 @@ const game = (() => {
     const fullResetGame = () => {
         restartGame();
         playerOne.resetScore();
-        bot.resetScore();
+        playerTwo.resetScore();
         _tieScore = 0;
         tieDisplay.textContent = 0;
+        console.log(playerTwo)
     }
 
-    return {getMark, nextTurn, getGameOverStatus, restartGame, fullResetGame};
+    return {getMark, getGameMode, nextTurn, getGameOverStatus, restartGame, fullResetGame};
 })();
 
 
