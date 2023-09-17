@@ -15,7 +15,7 @@
     <main id="game-container">
         <div id="score-panel">
             <div class="score" id="player-one-score">
-                <p>Player 1</p>
+                <p>You</p>
                 <p class="points">0</p>
             </div>
             <div class="score" id="draw">
@@ -23,25 +23,30 @@
                 <p class="points">0</p>
             </div>
             <div class="score" id="player-two-score">
-                <p>Player 2</p>
+                <p>Bot</p>
                 <p class="points">0</p>
             </div>
         </div>
         <div id="game-information">
-            <label for="game-mode">Play Vs bot?</label>
-            <input type="checkbox" id="game-mode" name="game-mode" value="vsBot" checked>
-            <div class="bot-level">
-                <label for="bot-difficulty-options">Bot Level</label>
-                <select name="difficulty" id="bot-difficulty-options">
-                    <option value="very easy">Very Easy</option>
-                    <option value="easy">Easy</option>
-                    <option value="medium" selected>Medium</option>
-                    <option value="hard">Hard</option>
-                    <option value="very hard">Very Hard</option>
-                    <option value="impossible">Impossible</option>
-                </select>
+            <div id="mode-indicators">
+                <div class="bot-level">
+                    <label for="bot-difficulty-options">Bot Level</label>
+                    <select name="difficulty" id="bot-difficulty-options">
+                        <option value="very easy">Very Easy</option>
+                        <option value="easy">Easy</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="hard">Hard</option>
+                        <option value="very hard">Very Hard</option>
+                        <option value="impossible">Impossible</option>
+                    </select>
+                </div>
+                <p id="turn-information" class="hidden"><span id="p-turn">Player 1</span> turn</p>
             </div>
-            <p id="turn-information">Player 1 turn</p>
+            <div id="select-game-mode" class="switch">
+                <label for="game-mode">You vs. Bot</label>
+                <input type="checkbox" id="game-mode" name="game-mode" value="vsBot" autocomplete="off" checked>
+                <span class="slider round"></span>
+            </div>
         </div>
         <div id="boardGame">
             <button class="choice-spot" data-index="0"></button>
